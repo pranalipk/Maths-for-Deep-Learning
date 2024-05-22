@@ -26,24 +26,29 @@ def fit_regression_model(X, y):
     """
     Train the model for the given number of epochs.
     """
-    learning_rate = 0.01
-    num_epochs = 5000
-    input_features = X.shape[1]
-    output_features = y.shape[1]
+    learning_rate = 0.001  # Adjusted learning rate
+    num_epochs = 5000  # Increased epochs for better convergence
+    input_features = X.shape[1]  # Number of features in input
+    output_features = y.shape[1]  # Number of features in output
     model = create_linear_regression_model(input_features, output_features)
-
-    loss_fn = nn.MSELoss()
+    
+    loss_fn = nn.MSELoss()  # Mean squared error loss
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
-    previos_loss = float("inf")
+    prev_loss = float("inf")
 
-    for epoch in range(num_epochs):
+    for epoch in range(1, num_epochs + 1):
         loss = train_iteration(X, y, model, loss_fn, optimizer)
+        
+        # Print loss every 1000 epochs
         if epoch % 1000 == 0:
-            print(f"Epoch {epoch}, Loss: {loss.item()}")
-        if abs(previos_loss - loss.item()) < 1e-6:
+            print(f"Epoch {epoch}/{num_epochs}, Loss: {loss.item()}")
+        
+        # Early stopping condition
+        if abs(prev_loss - loss.item()) < 1e-6:
             break
-        previos_loss = loss.item()
-
+        
+        prev_loss = loss.item()
+    
     return model, loss
 
